@@ -1,22 +1,94 @@
+
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <script src="../../libs/mindar/mindar-face-three.prod.js"></script> -->
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.136.0/build/three.module.js"
-        }
-      }
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/dist/mindar-face.prod.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/dist/mindar-face-aframe.prod.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+	const list = ["hat1", "homestarHead"];
+	const visibles = [false, true];
+	const setVisible = (button, entities, visible) => {
+	  if (visible) {
+	    button.classList.add("selected");
+	  } else {
+	    button.classList.remove("selected");
+	  }
+	  entities.forEach((entity) => {
+	    entity.setAttribute("visible", visible);
+	  });
+	}
+	list.forEach((item, index) => {
+	  const button = document.querySelector("#" + item);
+	  const entities = document.querySelectorAll("." + item + "-entity");
+	  setVisible(button, entities, visibles[index]);
+	  button.addEventListener('click', () => {
+      visibles.filter((val) => true).map((val, index) => {
+        setVisible(document.querySelector("#" + list[index]), document.querySelectorAll("." + list[index] + "-entity"), false);
+        return false;
+      });
+      visibles[index] = true;
+	    setVisible(button, entities, visibles[index]);
+	  });
+	});
+      })
     </script>
-
-    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/dist/mindar-face-three.prod.js"></script>
-    <script src="./main.js" type="module"></script>
-
     <style>
-      html, body {position: relative; margin: 0; width: 100%; height: 100%; overflow: hidden}
+      body {
+        margin: 0;
+      }
+      .example-container {
+        overflow: hidden;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      .options-panel {
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 2;
+      }
+      .options-panel img {
+	border: solid 2px;
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	cursor: pointer;
+      }
+      .options-panel img.selected {
+	border-color: green;
+      }
     </style>
   </head>
   <body>
+    <div class="example-container">
+      <div class="options-panel">
+	<img id="hat1" src="crown.png"/>
+	<img id="homestarHead" src="homestarHead.png"/>
+      </div>
+      <a-scene mindar-face embedded color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+        <a-assets>
+          <a-asset-item id="headModel" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/examples/face-tracking/assets/sparkar/headOccluder.glb"></a-asset-item>
+          <a-asset-item id="hatModel2" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/examples/face-tracking/assets/hat2/scene.gltf"></a-asset-item>
+          <a-asset-item id="hatModel-obj" src="blubbocrown.obj"></a-asset-item>
+          <a-asset-item id="hatModel-mtl" src="blubbocrown.mtl"></a-asset-item>
+          <a-asset-item id="homestarHead-obj" src="head.obj"></a-asset-item>
+          <a-asset-item id="homestarHead-mtl" src="head.mtl"></a-asset-item>
+        </a-assets>
+        <a-camera active="false" position="0 0 0"></a-camera>
+	<!-- head occluder -->
+        <a-entity mindar-face-target="anchorIndex: 168">
+	        <a-gltf-model mindar-face-occluder position="0 -0.3 0.15"rotation="0 0 0" scale="0.065 0.065 0.065" src="#headModel"></a-gltf-model>
+        </a-entity>
+        <a-entity mindar-face-target="anchorIndex: 10">
+          <a-obj-model  position="0 -0.1 -0.3" scale="5 5 5" src="#hatModel-obj" mtl="#hatModel-mtl" class="hat1-entity" visible="false"></a-obj-model>
+        </a-entity>
+        <a-entity mindar-face-target="anchorIndex: 1">
+          <a-obj-model position="0 -0.3 -1" scale="5 5 5" src="#homestarHead-obj" mtl="#homestarHead-mtl" class="homestarHead-entity" visible="false"></a-obj-model>
+        </a-entity>
+      </a-scene>
+    </div>
   </body>
 </html>
