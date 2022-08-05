@@ -34,7 +34,7 @@
           // const material = new THREE.MeshBasicMaterial({ color: 0xffffff * Math.random()});
           // const mesh = new THREE.Mesh(geometry, material);
           // instantiate a loader
-          const loader = new OBJLoader();
+          const loader = new THREE.OBJLoader();
 
           // load a resource
           loader.load(
@@ -42,7 +42,7 @@
             'blubbocrown.obj',
             // called when resource is loaded
             function ( object ) {
-              mesh = object
+              const mesh = object
               mesh.position.applyMatrix4(controller.matrixWorld);
               mesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
               scene.add(mesh);
